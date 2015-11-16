@@ -18,7 +18,7 @@ namespace SocialGoal.Service
         void DeleteFollowRequest(string fromuserId, string touserid);
         void ApproveRequest(string id, string userid);
         void DeleteFollowRequest(int id);
-       void SaveFollowRequest();
+        void SaveFollowRequest();
     }
 
     public class FollowRequestService : IFollowRequestService
@@ -63,7 +63,7 @@ namespace SocialGoal.Service
 
         public bool RequestSent(string fromuserId, string touserid)
         {
-            var followRequests = followRequestRepository.GetMany(g =>( g.FromUserId == fromuserId && g.ToUserId == touserid && g.Accepted == false));
+            var followRequests = followRequestRepository.GetMany(g => (g.FromUserId == fromuserId && g.ToUserId == touserid && g.Accepted == false));
             if (followRequests.Count() == 1)
             {
                 return true;

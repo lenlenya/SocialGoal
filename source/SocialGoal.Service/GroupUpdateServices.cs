@@ -13,8 +13,8 @@ namespace SocialGoal.Service
     {
         IEnumerable<GroupUpdate> GetUpdates();
         IEnumerable<GroupUpdate> GetUpdatesByGoal(int goalid);
-       // IEnumerable<GroupUpdate> GetUpdatesOfPublicGoals();
-      //IEnumerable<GroupUpdate> GetUpdatesForaUser(int userid);
+        // IEnumerable<GroupUpdate> GetUpdatesOfPublicGoals();
+        //IEnumerable<GroupUpdate> GetUpdatesForaUser(int userid);
         IEnumerable<GroupUpdate> GetTop20Updates(string userid, IGroupUserService groupUserService);
         IEnumerable<GroupUpdate> GetUpdatesWithStatus(int goalid);
         GroupUpdate GetLastUpdate(string userid);
@@ -32,7 +32,7 @@ namespace SocialGoal.Service
         private readonly IGroupUpdateUserRepository groupUpdateUserRepository;
         private readonly IGroupGoalRepository groupGoalRepository;
         private readonly IUnitOfWork unitOfWork;
-        public GroupUpdateService(IGroupUpdateRepository updateRepository,IGroupUpdateUserRepository groupUpdateUserRepository,IGroupGoalRepository groupGoalRepository, IUnitOfWork unitOfWork)
+        public GroupUpdateService(IGroupUpdateRepository updateRepository, IGroupUpdateUserRepository groupUpdateUserRepository, IGroupGoalRepository groupGoalRepository, IUnitOfWork unitOfWork)
         {
             this.groupUpdateRepository = updateRepository;
             this.groupUpdateUserRepository = groupUpdateUserRepository;
@@ -73,7 +73,7 @@ namespace SocialGoal.Service
             var updates = groupUpdateRepository.GetMany(u => (u.GroupGoalId == goalid) && (u.status != null)).OrderByDescending(u => u.GroupUpdateId).ToList();
             return updates;
         }
-        
+
         public GroupUpdate GetUpdate(int id)
         {
             var update = groupUpdateRepository.GetById(id);

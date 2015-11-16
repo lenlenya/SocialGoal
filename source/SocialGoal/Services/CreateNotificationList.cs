@@ -10,8 +10,7 @@ namespace SocialGoal.Web.Services
 {
     public class CreateNotificationList
     {
-
-        internal IEnumerable<NotificationsViewModel> GetNotifications(string userId, IGoalService goalService, ICommentService commentService, IUpdateService updateService, ISupportService supportService, IUserService userService, IGroupService groupService, IGroupUserService groupUserSevice, IGroupGoalService groupGoalService, IGroupCommentService groupcommentService, IGroupUpdateService groupupdateService, IFollowUserService followUserService, IGroupCommentUserService groupCommentUserService,ICommentUserService commentUserService,IGroupUpdateUserService groupUpdateUserService)
+        internal IEnumerable<NotificationsViewModel> GetNotifications(string userId, IGoalService goalService, ICommentService commentService, IUpdateService updateService, ISupportService supportService, IUserService userService, IGroupService groupService, IGroupUserService groupUserSevice, IGroupGoalService groupGoalService, IGroupCommentService groupcommentService, IGroupUpdateService groupupdateService, IFollowUserService followUserService, IGroupCommentUserService groupCommentUserService, ICommentUserService commentUserService, IGroupUpdateUserService groupUpdateUserService)
         {
             var goals = goalService.GetTop20GoalsofFollowing(userId);
             var comments = commentService.GetTop20CommentsOfPublicGoalFollwing(userId);
@@ -22,7 +21,7 @@ namespace SocialGoal.Web.Services
             var groupupdates = groupupdateService.GetTop20Updates(userId, groupUserSevice);
             var groupComments = groupcommentService.GetTop20CommentsOfPublicGoals(userId, groupUserSevice);
             var followers = followUserService.GetTop20Followers(userId);
-           // var groups = groupService.GetTop20Groups(groupids);
+            // var groups = groupService.GetTop20Groups(groupids);
 
             return (from g in goals
                     select new NotificationsViewModel()
@@ -42,7 +41,7 @@ namespace SocialGoal.Web.Services
                             select new NotificationsViewModel()
                             {
                                 CommentId = c.CommentId,
-                                CreatedDate = c.CommentDate,                                
+                                CreatedDate = c.CommentDate,
                                 CommentText = c.CommentText,
                                 UpdateId = c.UpdateId,
                                 GoalName = c.Update.Goal.GoalName,
@@ -50,133 +49,132 @@ namespace SocialGoal.Web.Services
                                 NumberOfComments = commentService.GetCommentsByUpdate(c.UpdateId).Count(),
                                 Updatemsg = updateService.GetUpdate(c.UpdateId).Updatemsg,
                                 NotificationDate = DateCalculation(c.CommentDate),
-                                UserName =commentUserService.GetUser(c.CommentId).UserName,
+                                UserName = commentUserService.GetUser(c.CommentId).UserName,
                                 UserId = commentUserService.GetUser(c.CommentId).Id,
                                 ProfilePicUrl = commentUserService.GetUser(c.CommentId).ProfilePicUrl,
 
                                 NotificationType = (int)NotificationType.commentedOnUpdate
                             })
-                              .Concat(from u in updates
-                                      select new NotificationsViewModel()
-                                      {
-                                          Update = u,
-                                          UpdateId = u.UpdateId,
-                                          GoalId = u.GoalId,
-                                          ProfilePicUrl = u.Goal.User.ProfilePicUrl,
-                                          GoalName = u.Goal.GoalName,
-                                          Updatemsg = u.Updatemsg,
-                                          UserId = u.Goal.UserId,
-                                          UserName = u.Goal.User.UserName,
-                                          NumberOfComments = commentService.GetCommentsByUpdate(u.UpdateId).Count(),
-                                          CreatedDate = u.UpdateDate,
-                                          NotificationDate = DateCalculation(u.UpdateDate),
-                                          NotificationType = (int)NotificationType.updatedGoal
-                                      })
-                                         .Concat(from gr in groupgoals
-                                                 select new NotificationsViewModel()
-                                                 {
-                                                     
-                                                     GroupGoalId = gr.GroupGoalId,
-                                                     CreatedDate = gr.CreatedDate,
-                                                     
-                                                     UserId = gr.GroupUser.UserId,
-                                                     UserName = userService.GetUser(gr.GroupUser.UserId).UserName,
-                                                     ProfilePicUrl = userService.GetUser(gr.GroupUser.UserId).ProfilePicUrl,
-                                                     
-                                                     GroupName = gr.Group.GroupName,                                                     
-                                                     GroupGoalName = gr.GoalName,
-                                                     GroupId = gr.GroupId,
-                                                     NotificationDate = DateCalculation(gr.CreatedDate),
-                                                     NotificationType = (int)NotificationType.createGroup
+                    .Concat(from u in updates
+                            select new NotificationsViewModel()
+                            {
+                                Update = u,
+                                UpdateId = u.UpdateId,
+                                GoalId = u.GoalId,
+                                ProfilePicUrl = u.Goal.User.ProfilePicUrl,
+                                GoalName = u.Goal.GoalName,
+                                Updatemsg = u.Updatemsg,
+                                UserId = u.Goal.UserId,
+                                UserName = u.Goal.User.UserName,
+                                NumberOfComments = commentService.GetCommentsByUpdate(u.UpdateId).Count(),
+                                CreatedDate = u.UpdateDate,
+                                NotificationDate = DateCalculation(u.UpdateDate),
+                                NotificationType = (int)NotificationType.updatedGoal
+                            })
+                    .Concat(from gr in groupgoals
+                            select new NotificationsViewModel()
+                            {
 
-                                                 })
-                                                .Concat(from gu in groupusers
-                                                        select new NotificationsViewModel()
-                                                        {
-                                                            GroupUser = gu,                                                            
-                                                            GroupUserId = gu.GroupUserId,
-                                                            
-                                                            UserId = gu.UserId,
-                                                            UserName =userService.GetUser(gu.UserId).UserName,
-                                                            ProfilePicUrl = userService.GetUser(gu.UserId).ProfilePicUrl,
-                                                            
-                                                            GroupName = groupService.GetGroup(gu.GroupId).GroupName,
-                                                            GroupId = gu.GroupId,
-                                                            CreatedDate = gu.AddedDate,
-                                                            NotificationDate = DateCalculation(gu.AddedDate),
-                                                            NotificationType = (int)NotificationType.joinGroup
-                                                        })
-                                                            .Concat(from s in supports
-                                                                    select new NotificationsViewModel()
-                                                                    {
-                                                                        Support = s,                                                                        
-                                                                        SupportId = s.SupportId,
-                                                                        GoalName = s.Goal.GoalName,
+                                GroupGoalId = gr.GroupGoalId,
+                                CreatedDate = gr.CreatedDate,
 
-                                                                        ProfilePicUrl = userService.GetUser(s.UserId).ProfilePicUrl,                                                                        
-                                                                        UserName =userService.GetUser(s.UserId).UserName,
-                                                                        UserId = s.UserId,                                                                        
-                                                                        CreatedDate = s.SupportedDate,
-                                                                        GoalId = s.GoalId,
-                                                                        NotificationDate = DateCalculation(s.SupportedDate),
-                                                                        NotificationType = (int)NotificationType.supportGoal
-                                                                    })
-                                                                      .Concat(from gu in groupupdates
-                                                                              select new NotificationsViewModel()
-                                                                              {
-                                                                                  GroupUpdate = gu,
-                                                                                  GroupUpdateId = gu.GroupUpdateId,
-                                                                                  GroupUpdatemsg = gu.Updatemsg,
+                                UserId = gr.GroupUser.UserId,
+                                UserName = userService.GetUser(gr.GroupUser.UserId).UserName,
+                                ProfilePicUrl = userService.GetUser(gr.GroupUser.UserId).ProfilePicUrl,
 
-                                                                                  UserId = groupUpdateUserService.GetGroupUpdateUser(gu.GroupUpdateId).Id,
-                                                                                  ProfilePicUrl = groupUpdateUserService.GetGroupUpdateUser(gu.GroupUpdateId).ProfilePicUrl,
-                                                                                  UserName = groupUpdateUserService.GetGroupUpdateUser(gu.GroupUpdateId).UserName,
-                                                                                  NotificationDate = DateCalculation(gu.UpdateDate),
-                                                                                  CreatedDate = gu.UpdateDate,
-                                                                                  GroupGoalId = gu.GroupGoalId,
-                                                                                  GroupId = gu.GroupGoal.GroupId,
-                                                                                  GroupGoalName = gu.GroupGoal.GoalName,
-                                                                                  GroupName = gu.GroupGoal.Group.GroupName,
-                                                                                  NotificationType = (int)NotificationType.updatedGroupgoal
+                                GroupName = gr.Group.GroupName,
+                                GroupGoalName = gr.GoalName,
+                                GroupId = gr.GroupId,
+                                NotificationDate = DateCalculation(gr.CreatedDate),
+                                NotificationType = (int)NotificationType.createGroup
 
-                                                                              })
-                                                                              .Concat(from gc in groupComments
-                                                                                      select new NotificationsViewModel()
-                                                                                      {
+                            })
+                    .Concat(from gu in groupusers
+                            select new NotificationsViewModel()
+                            {
+                                GroupUser = gu,
+                                GroupUserId = gu.GroupUserId,
 
-                                                                                          GroupCommentId = gc.GroupCommentId,
-                                                                                          GroupCommentText = gc.CommentText,
-                                                                                          GroupUpdateId = gc.GroupUpdateId,
-                                                                                          
-                                                                                          GroupGoalId = gc.GroupUpdate.GroupGoalId,
-                                                                                          GroupGoalName = gc.GroupUpdate.GroupGoal.GoalName,
+                                UserId = gu.UserId,
+                                UserName = userService.GetUser(gu.UserId).UserName,
+                                ProfilePicUrl = userService.GetUser(gu.UserId).ProfilePicUrl,
 
-                                                                                          UserId = groupCommentUserService.GetGroupCommentUser(gc.GroupCommentId).Id,
-                                                                                          UserName = groupCommentUserService.GetGroupCommentUser(gc.GroupCommentId).UserName,
-                                                                                          ProfilePicUrl = groupCommentUserService.GetGroupCommentUser(gc.GroupCommentId).ProfilePicUrl,
+                                GroupName = groupService.GetGroup(gu.GroupId).GroupName,
+                                GroupId = gu.GroupId,
+                                CreatedDate = gu.AddedDate,
+                                NotificationDate = DateCalculation(gu.AddedDate),
+                                NotificationType = (int)NotificationType.joinGroup
+                            })
+                    .Concat(from s in supports
+                            select new NotificationsViewModel()
+                            {
+                                Support = s,
+                                SupportId = s.SupportId,
+                                GoalName = s.Goal.GoalName,
 
-                                                                                          GroupUpdatemsg = gc.GroupUpdate.Updatemsg,
-                                                                                          GroupId = gc.GroupUpdate.GroupGoal.GroupUser.GroupId,
-                                                                                          GroupName = gc.GroupUpdate.GroupGoal.Group.GroupName,
-                                                                                          NotificationDate = DateCalculation(gc.CommentDate),
-                                                                                          CreatedDate = gc.CommentDate,
-                                                                                          NotificationType = (int)NotificationType.commentedonGroupUdate
-                                                                                      })
-                                                                                      .Concat(from f in followers
-                                                                                              select new NotificationsViewModel()
-                                                                                              {
-                                                                                                  FollowUserId = f.FollowUserId,
-                                                                                                  FromUser = f.FromUser,
-                                                                                                  ToUser = f.ToUser,
-                                                                                                  ProfilePicUrl = f.FromUser.ProfilePicUrl,
-                                                                                                  FromUserId = f.FromUserId,
-                                                                                                  ToUserId = f.ToUserId,
-                                                                                                  CreatedDate = f.AddedDate,
-                                                                                                  NotificationDate = DateCalculation(f.AddedDate),
-                                                                                                  NotificationType = (int)NotificationType.followUser
-                                                                                              }).OrderByDescending(n => n.CreatedDate);
+                                ProfilePicUrl = userService.GetUser(s.UserId).ProfilePicUrl,
+                                UserName = userService.GetUser(s.UserId).UserName,
+                                UserId = s.UserId,
+                                CreatedDate = s.SupportedDate,
+                                GoalId = s.GoalId,
+                                NotificationDate = DateCalculation(s.SupportedDate),
+                                NotificationType = (int)NotificationType.supportGoal
+                            })
+                    .Concat(from gu in groupupdates
+                            select new NotificationsViewModel()
+                            {
+                                GroupUpdate = gu,
+                                GroupUpdateId = gu.GroupUpdateId,
+                                GroupUpdatemsg = gu.Updatemsg,
+
+                                UserId = groupUpdateUserService.GetGroupUpdateUser(gu.GroupUpdateId).Id,
+                                ProfilePicUrl = groupUpdateUserService.GetGroupUpdateUser(gu.GroupUpdateId).ProfilePicUrl,
+                                UserName = groupUpdateUserService.GetGroupUpdateUser(gu.GroupUpdateId).UserName,
+                                NotificationDate = DateCalculation(gu.UpdateDate),
+                                CreatedDate = gu.UpdateDate,
+                                GroupGoalId = gu.GroupGoalId,
+                                GroupId = gu.GroupGoal.GroupId,
+                                GroupGoalName = gu.GroupGoal.GoalName,
+                                GroupName = gu.GroupGoal.Group.GroupName,
+                                NotificationType = (int)NotificationType.updatedGroupgoal
+
+                            })
+                    .Concat(from gc in groupComments
+                            select new NotificationsViewModel()
+                            {
+
+                                GroupCommentId = gc.GroupCommentId,
+                                GroupCommentText = gc.CommentText,
+                                GroupUpdateId = gc.GroupUpdateId,
+
+                                GroupGoalId = gc.GroupUpdate.GroupGoalId,
+                                GroupGoalName = gc.GroupUpdate.GroupGoal.GoalName,
+
+                                UserId = groupCommentUserService.GetGroupCommentUser(gc.GroupCommentId).Id,
+                                UserName = groupCommentUserService.GetGroupCommentUser(gc.GroupCommentId).UserName,
+                                ProfilePicUrl = groupCommentUserService.GetGroupCommentUser(gc.GroupCommentId).ProfilePicUrl,
+
+                                GroupUpdatemsg = gc.GroupUpdate.Updatemsg,
+                                GroupId = gc.GroupUpdate.GroupGoal.GroupUser.GroupId,
+                                GroupName = gc.GroupUpdate.GroupGoal.Group.GroupName,
+                                NotificationDate = DateCalculation(gc.CommentDate),
+                                CreatedDate = gc.CommentDate,
+                                NotificationType = (int)NotificationType.commentedonGroupUdate
+                            })
+                    .Concat(from f in followers
+                            select new NotificationsViewModel()
+                            {
+                                FollowUserId = f.FollowUserId,
+                                FromUser = f.FromUser,
+                                ToUser = f.ToUser,
+                                ProfilePicUrl = f.FromUser.ProfilePicUrl,
+                                FromUserId = f.FromUserId,
+                                ToUserId = f.ToUserId,
+                                CreatedDate = f.AddedDate,
+                                NotificationDate = DateCalculation(f.AddedDate),
+                                NotificationType = (int)NotificationType.followUser
+                            }).OrderByDescending(n => n.CreatedDate);
         }
-
 
         internal IEnumerable<NotificationsViewModel> GetProfileNotifications(string userid, IGoalService goalService, ICommentService commentService, IUpdateService updateService, ISupportService supportService, IUserService userService, IGroupService groupService, IGroupUserService groupUserSevice, IGroupGoalService groupGoalService, IGroupCommentService groupcommentService, IGroupUpdateService groupupdateService, ICommentUserService commentUserService)
         {
@@ -185,7 +183,6 @@ namespace SocialGoal.Web.Services
             var updates = updateService.GetTop20Updates(userid);
             var groupusers = groupUserSevice.GetTop20GroupsUsersForProfile(userid);
             var supports = supportService.GetTop20Support(userid);
-
 
             return (from g in goals
                     select new NotificationsViewModel()
@@ -220,66 +217,65 @@ namespace SocialGoal.Web.Services
                                 NotificationDate = DateCalculation(c.CommentDate),
                                 NotificationType = (int)NotificationType.commentedOnUpdate
                             })
-                              .Concat(from u in updates
-                                      select new NotificationsViewModel()
-                                      {
-                                          Update = u,
-                                          UpdateId = u.UpdateId,
-                                          GoalId = u.GoalId,
-                                          ProfilePicUrl = u.Goal.User.ProfilePicUrl,
-                                          GoalName = u.Goal.GoalName,
-                                          Updatemsg = u.Updatemsg,
-                                          UserId = u.Goal.UserId,
-                                          UserName = u.Goal.User.UserName,
-                                          NumberOfComments = commentService.GetCommentsByUpdate(u.UpdateId).Count(),
-                                          CreatedDate = u.UpdateDate,
-                                          NotificationDate = DateCalculation(u.UpdateDate),
-                                          NotificationType = (int)NotificationType.updatedGoal
-                                      })
-                                        .Concat(from s in supports
-                                                select new NotificationsViewModel()
-                                                {
-                                                    Support = s,                                                    
-                                                    SupportId = s.SupportId,
-                                                    GoalName = s.Goal.GoalName,
+                    .Concat(from u in updates
+                            select new NotificationsViewModel()
+                            {
+                                Update = u,
+                                UpdateId = u.UpdateId,
+                                GoalId = u.GoalId,
+                                ProfilePicUrl = u.Goal.User.ProfilePicUrl,
+                                GoalName = u.Goal.GoalName,
+                                Updatemsg = u.Updatemsg,
+                                UserId = u.Goal.UserId,
+                                UserName = u.Goal.User.UserName,
+                                NumberOfComments = commentService.GetCommentsByUpdate(u.UpdateId).Count(),
+                                CreatedDate = u.UpdateDate,
+                                NotificationDate = DateCalculation(u.UpdateDate),
+                                NotificationType = (int)NotificationType.updatedGoal
+                            })
+                    .Concat(from s in supports
+                            select new NotificationsViewModel()
+                            {
+                                Support = s,
+                                SupportId = s.SupportId,
+                                GoalName = s.Goal.GoalName,
 
-                                                    ProfilePicUrl = userService.GetUser(s.UserId).ProfilePicUrl,
-                                                    UserName = userService.GetUser(s.UserId).UserName,
-                                                    UserId = s.UserId,                                             
+                                ProfilePicUrl = userService.GetUser(s.UserId).ProfilePicUrl,
+                                UserName = userService.GetUser(s.UserId).UserName,
+                                UserId = s.UserId,
 
-                                                    CreatedDate = s.SupportedDate,
-                                                    GoalId = s.GoalId,
-                                                    NotificationType = (int)NotificationType.supportGoal
-                                                })
-                                                .Concat(from gu in groupusers
-                                                        select new NotificationsViewModel()
-                                                        {
-                                                            GroupUser = gu,
-                                                                                 
-                                                            GroupUserId = gu.GroupUserId,
-                                                            
-                                                            UserName = userService.GetUser(gu.UserId).UserName,
-                                                            ProfilePicUrl = userService.GetUser(gu.UserId).ProfilePicUrl,
-                                                            UserId = gu.UserId,
+                                CreatedDate = s.SupportedDate,
+                                GoalId = s.GoalId,
+                                NotificationType = (int)NotificationType.supportGoal
+                            })
+                    .Concat(from gu in groupusers
+                            select new NotificationsViewModel()
+                            {
+                                GroupUser = gu,
 
-                                                            GroupName = groupService.GetGroup(gu.GroupId).GroupName,
-                                                            GroupId = gu.GroupId,
-                                                            CreatedDate = gu.AddedDate,
-                                                            NotificationDate = DateCalculation(gu.AddedDate),
-                                                            NotificationType = (int)NotificationType.joinGroup
-                                                        })
+                                GroupUserId = gu.GroupUserId,
+
+                                UserName = userService.GetUser(gu.UserId).UserName,
+                                ProfilePicUrl = userService.GetUser(gu.UserId).ProfilePicUrl,
+                                UserId = gu.UserId,
+
+                                GroupName = groupService.GetGroup(gu.GroupId).GroupName,
+                                GroupId = gu.GroupId,
+                                CreatedDate = gu.AddedDate,
+                                NotificationDate = DateCalculation(gu.AddedDate),
+                                NotificationType = (int)NotificationType.joinGroup
+                            })
                                                         .OrderByDescending(n => n.CreatedDate);
         }
 
-        private string DateCalculation(DateTime  CreatedDate)
+        private string DateCalculation(DateTime CreatedDate)
         {
             string notificationdate;
             string creDate = CreatedDate.ToShortDateString();
             string dateNow = DateTime.Now.ToShortDateString();
-             TimeSpan duration = DateTime.Now - CreatedDate;
+            TimeSpan duration = DateTime.Now - CreatedDate;
             if (creDate == dateNow)
             {
-               
                 if (duration.Hours >= 1)
                 {
                     if (duration.Hours == 1)

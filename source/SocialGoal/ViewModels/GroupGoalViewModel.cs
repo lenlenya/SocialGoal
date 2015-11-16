@@ -8,8 +8,8 @@ namespace SocialGoal.Web.ViewModels
 {
     public class GroupGoalViewModel
     {
-         public int GroupGoalId { get; set; }
-       [Required(ErrorMessage = "*")]
+        public int GroupGoalId { get; set; }
+        [Required(ErrorMessage = "*")]
         public string GoalName { set; get; }
         [Required(ErrorMessage = "*")]
         public string Description { get; set; }
@@ -23,7 +23,7 @@ namespace SocialGoal.Web.ViewModels
         public DateTime EndDate { get; set; }
 
         public double? Target { get; set; }
-        
+
         public int? MetricId { get; set; }
 
         public int? FocusId { get; set; }
